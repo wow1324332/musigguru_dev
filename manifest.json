@@ -1,0 +1,21 @@
+{
+  "name": "Musigguru",
+  "short_name": "Musigguru",
+  "description": "꾸루를 위한 세상에 단 하나뿐인 음악 앱",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#FFB067",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}
