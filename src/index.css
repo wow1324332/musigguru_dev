@@ -1,0 +1,12 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 폰트나 기본 스크롤바 숨김 등 앱다운 느낌을 위한 추가 설정 */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+::-webkit-scrollbar {
+  display: none;
+}
