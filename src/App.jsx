@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Music, PlayCircle, User } from 'lucide-react';
+import { auth } from './firebase';
+import { onAuthStateChanged } from 'firebase/auth';
+import LoginScreen from './LoginScreen';
 
 // --- 1. 화면 컴포넌트 임시 생성 ---
-// 나중에 이 부분들은 별도의 파일(섹션화)로 깔끔하게 나눌 예정입니다.
-
 const CreateScreen = () => (
   <div className="p-5 flex flex-col h-full bg-white">
     <h2 className="text-2xl font-bold mb-4">음악 제작</h2>
@@ -28,9 +29,43 @@ const MyPageScreen = () => (
 // --- 2. 메인 App 컴포넌트 ---
 export default function App() {
   const [activeTab, setActiveTab] = useState('create');
+  
+  // 로그인 상태와 로딩 상태를 관리하는 변수
+  const [user, setUser] = useState(null);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
 
+  // 앱이 켜질 때 파이어베이스에서 로그인 상태를 확인
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setIsAuthLoading(false); // 확인이 끝나면 로딩 끝
+    });
+    return () => unsubscribe();
+  }, []);
+
+  // 1) 로그인 확인 중일 때 보여줄 로딩 화면
+  if (isAuthLoading) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        {/* 빙글빙글 도는 로딩 애니메이션 */}
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent"></div>
+      </div>
+    );
+  }
+
+  // 2) 로그인이 안 되어 있을 때 로그인 화면 띄우기 (폴더블폰 고려 레이아웃)
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex justify-center">
+        <div className="w-full max-w-md relative overflow-hidden min-h-screen shadow-2xl">
+          <LoginScreen />
+        </div>
+      </div>
+    );
+  }
+
+  // 3) 로그인이 완료되면 보여줄 메인 앱 화면
   return (
-    // 배경을 어둡게 하고, 중앙에 모바일 크기의 화면을 고정 (폴더블/PC 대응)
     <div className="min-h-screen bg-gray-100 flex justify-center">
       <div className="w-full max-w-md bg-white shadow-xl flex flex-col relative overflow-hidden min-h-screen">
         
@@ -48,7 +83,6 @@ export default function App() {
 
         {/* 하단 네비게이션 탭 바 */}
         <nav className="absolute bottom-0 w-full bg-white border-t border-gray-200 flex justify-around items-center h-16 px-2 pb-safe">
-          
           <button 
             onClick={() => setActiveTab('create')}
             className={`flex flex-col items-center justify-center w-full h-full space-y-1 ${activeTab === 'create' ? 'text-primary' : 'text-gray-400'}`}
@@ -72,7 +106,6 @@ export default function App() {
             <User size={24} strokeWidth={activeTab === 'mypage' ? 2.5 : 2} />
             <span className="text-[10px] font-medium">마이페이지</span>
           </button>
-
         </nav>
       </div>
     </div>
